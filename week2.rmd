@@ -1,0 +1,46 @@
+---
+title: "Data607 - HW2-SQL & R"
+author: "Vanita Hackworth"
+date: "February 11, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Install RMySQL package to connect to MYSQL DBMS
+
+ 
+
+```{r pkg-RMariaDB}
+#install.packages("RMariaDB")
+library(DBI)
+```
+
+## Create a Database Connection object 
+
+```{r dbconn-con, echo=FALSE}
+con <- dbConnect(RMySQL::MySQL(),
+                 dbname = "movies",
+                 
+                 host = "localhost",
+                 port = 3306,
+                 user="root",
+                 password="P!kc7Hs}&8m>R&(U")
+```
+
+## List the tables in movies database
+```{r movies-tables}
+dbListTables(con)
+```
+
+## Read and display the contents of each table in the movies database
+```{r}
+dbReadTable(con,"movies")
+dbReadTable(con,"gross")
+dbReadTable(con,"ratings")
+dbReadTable(con,"theaters")
+dbReadTable(con,"dates")
+```
+
