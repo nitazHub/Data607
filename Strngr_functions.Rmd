@@ -1,0 +1,53 @@
+---
+title: "Data607 - HW3 - Regular Expressions"
+author: "Vanita Hackworth"
+date: "February 12, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Chapter 8 - Automated Data Collection with R
+```{r}
+library(stringr)
+```
+
+### Problem #3
+####A)rearrange the vector so all names conform to firstname_lastname
+1) Extract names data into a character vector name
+```{r names-vector, eval=TRUE}
+raw.data <-"555-1239Moe Szyslak(636) 555-0113Burns, C. Montgomery555-6542Rev. Timothy Lovejoy555 8904Ned Flanders636-555-3226Simpson, Homer5553642Dr. Julius Hibbert"
+
+name <- (unlist(str_extract_all(raw.data,"[[:alpha:],. ]{2,}")))
+name
+```
+2)split name character vector into matrix of character vectors.  The pttern will be the comma in order to put those firstname into a seperate column
+
+```{r names-split}
+names_split <-str_split_fixed(name,pattern=fixed(","),n=2)
+names_split
+```
+
+4) Create a new character vector consisting of all names in first name, last name format by using the str_c function to rejoin the elements on column2 to column1.  If the name was already in the proper sequence, the second column will contain spaces.  I also seerated each set of names with a double space, to make extracting easier.
+```{r}
+firstname_lastname <- str_c(names_split[,2],names_split[,1], sep = fixed(" "), collapse = "  ")
+firstname_lastname
+```
+####B)Construct a logical vector indicating whether a character has a title
+1) split name into a list of character vectors.  Then use str_detect to look for a period, which is in every title
+```{r}
+names_split
+has_title <- str_detect(names_split[,1], pattern = fixed("."))
+has_title
+```
+
+####B)Construct a logical vector indicating whether a character has a second name
+1) use the str_detect from above to evaluate the second column for a period
+```{r}
+names_split
+has_second_name <- str_detect(names_split[,2], pattern = fixed("."))
+has_second_name
+```
+
