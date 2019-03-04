@@ -1,0 +1,55 @@
+---
+title: "Tidy and Transform"
+author: "Vanita Hackworth"
+date: "March 4, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+library(stringr)
+library(dplyr)
+library(tidyr)
+library(data.table)
+```
+##Reading
+
+```{r airline}
+airline_data <- read_csv("Tidying and Transforming Data.csv")
+str(airline_data)
+summary(airline_data)
+```
+
+##Tidying
+
+```{r}
+table(airline_data$AIRLINE)
+airline_data$AIRLINE <- factor(airline_data$AIRLINE)
+table(airline_data$STATUS)
+airline_data$STATUS <- factor(airline_data$STATUS)
+dim(airline_data)
+```
+
+#Preparation for Analysis - Missing values
+```{r}
+airline_data_g <- gather(airline_data, CITY, MINUTES, -AIRLINE, -STATUS)
+airline_data_g$CITY <- factor(airline_data_g$CITY)
+dim(airline_data_g)
+head(airline_data_g)
+airline_data_ready <- na.omit(airline_data_g)
+airline_data_ready <- spread(airline_data_ready, STATUS, MINUTES)
+glimpse(airline_data_ready)
+dim(airline_data_ready)
+head(airline_data_ready)
+tail(airline_data_ready)
+```
+
+###Analysis-Compare delays across airlines
+```{r}
+airline_delay_tbl <- select(airline_data_ready, AIRLINE, delayed)
+glimpse(airline_delay_tbl)
+summarize(filter(airline_delay_tbl, AIRLINE=='ALASKA'), Alasks_Avg_delay=mean(delayed))
+summarize(filter(airline_delay_tbl, AIRLINE=='AM WEST'), AM_Avg_delay=mean(delayed))
+```
+
