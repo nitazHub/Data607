@@ -1,0 +1,76 @@
+---
+title: "Project2 Wide Datasets"
+author: "Vanita Hackworth"
+date: "March 10, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+library(dplyr)
+```
+
+## First Wide Dataset Example
+
+For my first example, I used samples of Census data from the IPUMS USA website [https://usa.ipums.org/usa/index.shtml]. I selected multiple related variables in order to create a wide dataset. I then downloaded the data into a .csv format.
+
+### Read Wide Data into R Data Frame
+```{r ipums_data, eval=TRUE}
+ipums_data <- read.csv("usa_00020.csv")
+```
+
+### Explore the data
+```{r}
+str(ipums_data)
+```
+I see that this is a data.frame consisting of 966,058 rows of 18 variables.
+```{r}
+names(ipums_data)
+```
+I see the columns appear to have somewhat descriptive names but will be changed in the final output
+
+### Convert data.frame to a tibble and display in tibble format
+```{r tibble ipums_data, eval=TRUE}
+ipums_tbl <- as.tbl(ipums_data)
+ipums_tbl
+```
+### Cleaning - recoding Race 
+We see that the column race has numeric variables.  I will create n new column showing the character representation of these values
+1.Create a vector of race identification codes(obtained from IPUMS)
+```{r}
+glimpse(ipums_tbl)
+race_codes <- read_csv("race_codes.csv")
+str(race_codes)
+racevec <- race_codes$`Race [general version]`
+names(racevec) <- race_codes$RACE
+```
+We now have a named vector containing the character description of the 9 numeric codes in our original data. I will create a new column which translates these numeric values to thir description for each row. Then chaange the column to a factor.
+```{r}
+ipums_tbl$RaceDesc <- racevec[ipums_tbl$RACE]
+ipums_tbl$RaceDesc <- as.factor(ipums_tbl$RaceDesc)
+glimpse(ipums_tbl)
+
+```
+### Cleaning - Recoding Grade 
+We also see that the column HIGRADE has numeric variables.  I will create n new column showing the character representation of these values
+1.Create a vector of highest grades completed codes(obtained from IPUMS)
+```{r}
+grade_codes <- read_csv("grade_codes.csv")
+str(grade_codes)
+gradevec <- grade_codes$`Highest grade of schooling [general version]`
+names(gradevec) <- grade_codes$HIGRADE
+```
+We see that there are 24 values of grades describing the highest grade completed.We now have a named vector containing the character description of the 24 numeric codes in our original data. I will create a new column which translates these numeric values to thir description for each row.
+```{r}
+ipums_tbl$Highest_Grade_Completed <- gradevec[ipums_tbl$HIGRADE + 1]
+ipums_tbl$Highest_Grade_Completed <- as.factor(ipums_tbl$Highest_Grade_Completed)
+glimpse(ipums_tbl)
+table(ipums_tbl$Highest_Grade_Completed)
+```
+### Prepare for analysis
+Select a subset of columns for analysis
+```{r subset, eval=TRUE}
+
+```
+
